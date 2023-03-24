@@ -24,9 +24,55 @@ class Citas{
         this.citas = [...this.citas, cita];
         console.log(this.citas)
     }
+
+    borrarCita(id){
+        this.citas = this.citas.filter(cita => cita.id !== id);
+        console.log(this.citas)
+    }
 }
 
 class UI{
+
+    mostrarCitas(citas){
+
+        citas.forEach(cita => {
+
+            const {mascota, propietario, telefono, fecha, hora, sintomas, id} = cita;
+
+            // Informacion
+            const divCita = document.createElement('DIV');
+            divCita.classList.add('lista-citas','cita');
+            divCita.innerHTML = `
+                <p class=""><span class="fw-bold text-uppercase fs-2">${mascota}</span></p>
+                <p class="badge bg-info text-white">${id}</p>
+                <p class=""><span class="fw-bolder">Nombre dueño: </span>${propietario}</p>
+                <p class=""><span class="fw-bolder">Teléfono: </span>${telefono}</p>
+                <p class=""><span class="fw-bolder">Fecha: </span>${fecha}</p>
+                <p class=""><span class="fw-bolder">Hora atención: </span>${hora}</p>
+                <p class=""><span class="fw-bolder">Síntomas: </span>${sintomas}</p>
+
+            `
+            // Boton eliminar
+            const botonEditar = document.createElement('button');
+            botonEditar.classList.add('btn', 'btn-secondary',);
+            botonEditar.textContent = 'Editar';
+            divCita.appendChild(botonEditar);
+
+            // Boton eliminar
+            const botonEliminar = document.createElement('button');
+            botonEliminar.classList.add('btn', 'btn-danger');
+            botonEliminar.textContent = 'Eliminar';
+            botonEliminar.onclick =  () => {
+                eliminarCita(id);
+            }
+            divCita.appendChild(botonEliminar);
+
+
+            contenedorCitas.appendChild(divCita);
+
+            
+        });
+    }
 
     mostrarAlerta(contenedor, mensaje, tipo){
 
@@ -50,6 +96,12 @@ class UI{
             }, 3000);
         }
 
+    }
+
+    limpiarHTML(){
+        while(contenedorCitas.firstChild){
+            contenedorCitas.removeChild(contenedorCitas.firstChild);
+        }
     }
 
 }
@@ -80,7 +132,8 @@ const objetoCita = {
     telefono: '',
     fecha: '',
     hora: '',
-    sintomas: ''
+    sintomas: '',
+    id: Date.now()
 }
 
 // FUNCIONES
@@ -99,17 +152,33 @@ function agregarCita(evento){
     const {mascota, propietario, telefono, fecha, hora, sintomas} = objetoCita;
 
     if(mascota === '' || propietario === '' || telefono === '' || fecha === '' || hora === '' || sintomas === ''){
-        ui.mostrarAlerta(formulario, 'Este es un error', 'error');
+        ui.mostrarAlerta(formulario, 'Todos los campos son obligatorios', 'error');
+        return;
     }else{
         ui.mostrarAlerta(formulario, 'Cita agregada correctamente', 'correcto');
-        administrarCitas.nuevaCita(objetoCita);
     }
 
+    // Limpiamos el html duplicado
+    ui.limpiarHTML();
+
+    // Agregamos una cita al objeto
+    administrarCitas.nuevaCita(objetoCita);
+
+    const {citas} = administrarCitas;
+    
+    // Insertamos la cita en el html
+    ui.mostrarCitas(citas);
 
 }
 
 // Elimina una cita
-function eliminarCita(){
+function eliminarCita(id){
+
+    const {citas} = administrarCitas;
+
+    ui.limpiarHTML();
+    administrarCitas.borrarCita(id);
+    ui.mostrarCitas(citas);
 
 }
 

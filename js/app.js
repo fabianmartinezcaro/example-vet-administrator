@@ -33,45 +33,80 @@ class Citas{
 
 class UI{
 
-    mostrarCitas(citas){
+    mostrarCitas({citas}){
+
+        this.limpiarHTML();
 
         citas.forEach(cita => {
 
             const {mascota, propietario, telefono, fecha, hora, sintomas, id} = cita;
 
-            // Informacion
+            // DIV información
             const divCita = document.createElement('DIV');
-            divCita.classList.add('lista-citas','cita');
-            divCita.innerHTML = `
-                <p class=""><span class="fw-bold text-uppercase fs-2">${mascota}</span></p>
-                <p class="badge bg-info text-white">${id}</p>
-                <p class=""><span class="fw-bolder">Nombre dueño: </span>${propietario}</p>
-                <p class=""><span class="fw-bolder">Teléfono: </span>${telefono}</p>
-                <p class=""><span class="fw-bolder">Fecha: </span>${fecha}</p>
-                <p class=""><span class="fw-bolder">Hora atención: </span>${hora}</p>
-                <p class=""><span class="fw-bolder">Síntomas: </span>${sintomas}</p>
+            divCita.classList.add('cita','p-3');
+            divCita.dataset.id = id; 
 
-            `
+            // Información de la cita
+            const parrafoMascota = document.createElement('h2');
+            parrafoMascota.classList.add('card-title', 'font-weight-bolder');
+            parrafoMascota.textContent = mascota;
+
+            const parrafoPropietario = document.createElement('p');
+            parrafoPropietario.innerHTML = `
+                <span class="font-weight-bolder">Propietario:</span> ${propietario}
+            `;
+
+            const parrafoTelefono = document.createElement('p');
+            parrafoTelefono.innerHTML = `
+                <span class="font-weight-bolder">Teléfono:</span> ${telefono}
+            `;
+
+            const parrafoFecha = document.createElement('p');
+            parrafoFecha.innerHTML = `
+                <span class="font-weight-bolder">Fecha:</span> ${fecha}
+            `;
+
+            const parrafoHora = document.createElement('p');
+            parrafoHora.innerHTML = `
+                <span class="font-weight-bolder">Hora:</span> ${hora}
+            `;
+
+            const parrafoSintomas = document.createElement('p');
+            parrafoSintomas.innerHTML = `
+                <span class="font-weight-bolder">Síntomas:</span> ${sintomas}
+            `;
+
+
             // Boton eliminar
-            const botonEditar = document.createElement('button');
-            botonEditar.classList.add('btn', 'btn-secondary',);
+            const botonEditar = document.createElement('a');
+            botonEditar.classList.add('btn', 'btn-secondary', 'm-2');
             botonEditar.textContent = 'Editar';
             divCita.appendChild(botonEditar);
 
             // Boton eliminar
-            const botonEliminar = document.createElement('button');
-            botonEliminar.classList.add('btn', 'btn-danger');
+            const botonEliminar = document.createElement('a');
+            botonEliminar.classList.add('btn', 'btn-danger', 'text-white', 'm-2');
             botonEliminar.textContent = 'Eliminar';
             botonEliminar.onclick =  () => {
                 eliminarCita(id);
             }
-            divCita.appendChild(botonEliminar);
 
+            // Incluímos la información en el div Informacion de la cita
+            divCita.appendChild(parrafoMascota);
+            divCita.appendChild(parrafoPropietario);
+            divCita.appendChild(parrafoTelefono);
+            divCita.appendChild(parrafoFecha);
+            divCita.appendChild(parrafoHora);
+            divCita.appendChild(parrafoSintomas);
+
+            // Botones
+            divCita.appendChild(botonEliminar);
+            divCita.appendChild(botonEditar);
 
             contenedorCitas.appendChild(divCita);
-
             
         });
+        
     }
 
     mostrarAlerta(contenedor, mensaje, tipo){
@@ -141,13 +176,11 @@ const objetoCita = {
 // Leemos los datos del input
 function datosCita(evento){
     objetoCita[evento.target.name] = evento.target.value;
-    console.log(objetoCita);
 }
 
 // Valida y agrega una nueva cita
 function agregarCita(evento){
     evento.preventDefault();
-
     // Extraemos los datos del objeto cita
     const {mascota, propietario, telefono, fecha, hora, sintomas} = objetoCita;
 
@@ -158,27 +191,40 @@ function agregarCita(evento){
         ui.mostrarAlerta(formulario, 'Cita agregada correctamente', 'correcto');
     }
 
-    // Limpiamos el html duplicado
     ui.limpiarHTML();
 
     // Agregamos una cita al objeto
-    administrarCitas.nuevaCita(objetoCita);
+    administrarCitas.nuevaCita({...objetoCita});
+
+    // Mostrar el html
+    const {citas} = administrarCitas;
+    ui.mostrarCitas(citas);
+
+    // Reiniciamos el objeto
+    reiniciarObjeto();
+    formulario.reset();
+
+}
+
+
+function eliminarCita(id){
+    
+    administrarCitas.borrarCita(id);
 
     const {citas} = administrarCitas;
-    
-    // Insertamos la cita en el html
     ui.mostrarCitas(citas);
 
 }
 
-// Elimina una cita
-function eliminarCita(id){
 
-    const {citas} = administrarCitas;
+function reiniciarObjeto(){
 
-    ui.limpiarHTML();
-    administrarCitas.borrarCita(id);
-    ui.mostrarCitas(citas);
+    objetoCita.mascota = '';
+    objetoCita.propietario = '';
+    objetoCita.telefono = '';
+    objetoCita.fecha = '';
+    objetoCita.hora = '';
+    objetoCita.sintomas = '';
 
 }
 

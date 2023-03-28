@@ -33,7 +33,9 @@ class Citas{
 
 class UI{
 
-    mostrarCitas({citas}){
+    mostrarCitas(citas){
+
+        console.log(citas)
 
         this.limpiarHTML();
 
@@ -77,7 +79,7 @@ class UI{
             `;
 
 
-            // Boton eliminar
+            // Boton editar
             const botonEditar = document.createElement('a');
             botonEditar.classList.add('btn', 'btn-secondary', 'm-2');
             botonEditar.textContent = 'Editar';
@@ -91,7 +93,7 @@ class UI{
                 eliminarCita(id);
             }
 
-            // Incluímos la información en el div Informacion de la cita
+            // Incluímos la información en el div de la cita
             divCita.appendChild(parrafoMascota);
             divCita.appendChild(parrafoPropietario);
             divCita.appendChild(parrafoTelefono);
@@ -168,7 +170,6 @@ const objetoCita = {
     fecha: '',
     hora: '',
     sintomas: '',
-    id: Date.now()
 }
 
 // FUNCIONES
@@ -191,6 +192,8 @@ function agregarCita(evento){
         ui.mostrarAlerta(formulario, 'Cita agregada correctamente', 'correcto');
     }
 
+    objetoCita.id = Date.now();
+
     ui.limpiarHTML();
 
     // Agregamos una cita al objeto
@@ -208,7 +211,9 @@ function agregarCita(evento){
 
 
 function eliminarCita(id){
-    
+
+    ui.limpiarHTML();
+
     administrarCitas.borrarCita(id);
 
     const {citas} = administrarCitas;

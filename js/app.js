@@ -1,4 +1,6 @@
 // --- VARIABLES ----
+const contenido = document.querySelector('#contenido');
+
 // FORMULARIO
 const formulario = document.querySelector('#nueva-cita')
 
@@ -22,18 +24,20 @@ class Citas{
 
     nuevaCita(cita){
         this.citas = [...this.citas, cita];
-        console.log(this.citas)
     }
 
     borrarCita(id){
         this.citas = this.citas.filter(cita => cita.id !== id);
-        console.log(this.citas)
+    }
+
+    editarCita(id){
+        
     }
 }
 
 class UI{
 
-    mostrarCitas(citas){
+    mostrarCitas({citas}){
 
         console.log(citas)
 
@@ -84,6 +88,9 @@ class UI{
             botonEditar.classList.add('btn', 'btn-secondary', 'm-2');
             botonEditar.textContent = 'Editar';
             divCita.appendChild(botonEditar);
+            botonEditar.onclick = () => {
+                modificarCita(id);
+            }
 
             // Boton eliminar
             const botonEliminar = document.createElement('a');
@@ -200,8 +207,8 @@ function agregarCita(evento){
     administrarCitas.nuevaCita({...objetoCita});
 
     // Mostrar el html
-    const {citas} = administrarCitas;
-    ui.mostrarCitas(citas);
+    
+    ui.mostrarCitas(administrarCitas);
 
     // Reiniciamos el objeto
     reiniciarObjeto();
@@ -216,9 +223,12 @@ function eliminarCita(id){
 
     administrarCitas.borrarCita(id);
 
-    const {citas} = administrarCitas;
-    ui.mostrarCitas(citas);
+    ui.mostrarCitas(administrarCitas);
 
+}
+
+function modificarCita(id){
+    administrarCitas.editarCita(id);
 }
 
 
@@ -232,8 +242,6 @@ function reiniciarObjeto(){
     objetoCita.sintomas = '';
 
 }
-
-
 
 
 
